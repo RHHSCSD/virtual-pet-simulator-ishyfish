@@ -214,6 +214,10 @@ public class VirtualPet {
                     System.out.println(" 2) Card matching");
                     
                     int gameSelection = keyboard.nextInt();
+                    
+                    if (gameSelection == 1){
+                        System.out.println("___________________");
+                    }
                 } 
 
             }
