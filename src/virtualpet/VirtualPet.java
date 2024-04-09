@@ -27,6 +27,9 @@ public class VirtualPet {
         String consonants = "bcdfghjklmnpqrstvwxyz";
         final int startingPoints = 20;
         final int statMin = 4;
+        int money = 0;
+        int moneyEarned;
+
 
         //Starting screen
         System.out.println("    Birdsville");
@@ -215,14 +218,146 @@ public class VirtualPet {
                     
                     int gameSelection = keyboard.nextInt();
                     
+                    //random number guessing game 1-100
                     if (gameSelection == 1){
+                        //generate random number
+                        int randNum = random.nextInt(100)+1;
                         System.out.println("___________________");
+                        System.out.println("Random number guessing game!");
+                        
+                        //loop guessing phase until player gets number correct
+                        boolean guessed = false;
+                        int guesses = 0;
+                        while (guessed == false){
+                            System.out.println("Make a guess 1-100:");
+                            int guess = keyboard.nextInt();
+                            guesses += 1;
+                            if (guess == randNum){
+                                guessed = true;
+                                System.out.println("Correct! It took you " + guesses + " gusses.");
+                            }
+                            else if (guess > randNum){
+                               System.out.println("Too high!");
+                            }
+                            else {
+                               System.out.println("Too low!");
+                            }
+                        }
+                        
+                        //award money based on number of guesses
+                        if (guesses <7) { 
+                            moneyEarned = 100-15*(guesses-1);
+                        }
+                        else{
+                            moneyEarned = 0; 
+                        }
+                        
+                        System.out.println("Congratulations, you earned $" + moneyEarned);
+                        money += moneyEarned;
                     }
+                    //blind card matching game
+                    else if (gameSelection == 2){
+                        String unshuffled = "AA22334455";
+                        String displayedCards = "XXXXXXXXXX";
+                        
+                        //randomly generate a shuffled string
+                        String shuffled = "";
+                        for (int i = 10; i > 0; i--){
+                            int randCard = random.nextInt(i);
+                            shuffled += unshuffled.charAt(randCard);
+                            if (randCard == 0){
+                                unshuffled = unshuffled.substring(1);
+                            }
+                            else if (randCard == i-1){
+                                 unshuffled = unshuffled.substring(0,randCard); 
+                            }
+                            else{
+                                unshuffled = unshuffled.substring(0,randCard) + unshuffled.substring(randCard+1);
+                            }
+                        }
+ 
+                        System.out.println("___________________");
+                        System.out.println("Cards matching game!");
+                        
+                        //loop until all cards matched
+                        int turns = 0;
+                        boolean unmatched = false;
+                        while (unmatched == false){
+                            System.out.println("\n");
+                            System.out.println(displayedCards);
+                            System.out.println("Enter the position of card 1:");
+                            int index1 = keyboard.nextInt();
+                            System.out.println("Enter the position of card 2:");
+                            int index2 = keyboard.nextInt();
+                            
+                            turns += 1;
+                            
+                            if (shuffled.charAt(index1) == shuffled.charAt(index2)){
+                                System.out.println("Correct, card " + index1 + " and card " + index2 + " match!");
+                                
+                                if (index1<index2){
+                                    if (index1 == 0){
+                                        if (index2 == shuffled.length()-1){
+                                            displayedCards = shuffled.charAt(index1) + displayedCards.substring(index1+1,index2) + shuffled.charAt(index2);
+                                        }
+                                        else{
+                                            displayedCards = shuffled.charAt(index1) + displayedCards.substring(index1+1,index2) + shuffled.charAt(index2) + displayedCards.substring(index2+1);
+                                        }
+                                    }
+                                    else{
+                                        if (index2 == shuffled.length()-1){
+                                            displayedCards = displayedCards.substring(0,index1) + shuffled.charAt(index1) + displayedCards.substring(index1+1,index2) + shuffled.charAt(index2);
+                                        }
+                                        else {
+                                            displayedCards = displayedCards.substring(0,index1) + shuffled.charAt(index1) + displayedCards.substring(index1+1,index2) + shuffled.charAt(index2) + displayedCards.substring(index2+1);
+                                        }
+                                    }
+                                }
+                                else{
+                                    if (index2 == 0){
+                                        if (index1 == shuffled.length()-1){
+                                            displayedCards = shuffled.charAt(index2) + displayedCards.substring(index2+1,index1) + shuffled.charAt(index1);
+                                        }
+                                        else{
+                                            displayedCards = shuffled.charAt(index2) + displayedCards.substring(index2+1,index1) + shuffled.charAt(index1) + displayedCards.substring(index1+1);
+                                        }
+                                    }
+                                    else{
+                                        if (index1 == shuffled.length()-1){
+                                            displayedCards = displayedCards.substring(0,index2) + shuffled.charAt(index2) + displayedCards.substring(index2+1,index1) + shuffled.charAt(index1);
+                                        }
+                                        else {
+                                            displayedCards = displayedCards.substring(0,index2) + shuffled.charAt(index2) + displayedCards.substring(index2+1,index1) + shuffled.charAt(index1) + displayedCards.substring(index1+1);
+                                        }
+                                    }
+                                }
+                            }
+                            else{
+                                System.out.println("Card " + index1 + " and card " + index2 + " do not match.");
+                            }
+                            
+                            if (displayedCards.equals(shuffled)){
+                                unmatched = true;
+                            }
+                        }
+                        System.out.println("You matched all the cards! It took you " + turns + " turns.");
+                        
+                        if (turns <16) { 
+                            moneyEarned = 100-10*(turns-5);
+                        }
+                        else{
+                            moneyEarned = 0; 
+                        }
+                        
+                        System.out.println("Congratulations, you earned $" + moneyEarned);
+                        money += moneyEarned;
+                     }
+                        
+               
                 } 
 
             }
 
         }
     }
-
 }
