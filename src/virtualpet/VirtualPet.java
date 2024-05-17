@@ -22,13 +22,15 @@ public class VirtualPet {
         Random random = new Random();
 
         //variables
-        final String USERNAME = "snoopy";
-        final String PASSWORD = "toto";
+        String username = "";
+        String password = "";
         String pet = "";
         String petName = "";
         final int totalPoints = 100;
         final int statMin = 20;
         final int startingPoints = 5;
+        
+        boolean petGenerated = false;
         
         //stats indexes: 0 - health, 1 - energy, 2 - food
         int maxStats[] = new int[3];
@@ -44,45 +46,83 @@ public class VirtualPet {
         System.out.println("___________________");
 
         //login
-        boolean loggedIn = false;
-        for (int i = 0; i < 3; i++) {
-            System.out.println("User:");
-            String user = keyboard.nextLine();
-
-            System.out.println("Password:");
-            String pass = keyboard.nextLine();
-
-            if (user.equals(USERNAME) && pass.equals(PASSWORD)) {
-                loggedIn = true;
-                break;
-            } else {
-                System.out.println('\n');
-                System.out.println("Invalid login");
+        System.out.println("Enter user:");
+        username = keyboard.nextLine();
+        
+        //if user was already created
+        try{
+            File f = new File(username+".txt");
+            Scanner input = new Scanner(f);
+            
+            boolean loggedIn = false;
+            
+            //read in password from file
+            password = input.nextLine();
+            
+            //give 3 trys to match password
+            for (int i=0; i<3; i++){
+                System.out.println("Enter password:");
+                String enteredPassword = keyboard.nextLine();
+                
+                if (password.equals(enteredPassword)){
+                    loggedIn = true;
+                    break;
+                }
+                else{
+                    System.out.println("Incorrect.");
+                }
             }
+            
+            if (loggedIn == true) {
+                System.out.println("Access granted");
+            } else {
+                System.out.println("Access denied");
+                System.exit(0);
+            }
+            
+            petGenerated = true;
+            
+            //read in all pet stats from file
+            pet = input.nextLine();
+            petName = input.nextLine();
+            maxStats[0] = input.nextInt();
+            maxStats[1] = input.nextInt();
+            maxStats[2] = input.nextInt();
+            currentStats[0] = input.nextInt();
+            currentStats[1] = input.nextInt();
+            currentStats[2] = input.nextInt();
+            money =  input.nextInt();
+            
+            input.close();
         }
+        //if user wasn't created before
+        catch (FileNotFoundException e){
+            System.out.println("This user does not currently exist.");
+            System.out.println("\n");
 
-        if (loggedIn == true) {
-            System.out.println('\n');
-            System.out.println("Access granted");
-        } else {
-            System.out.println("Access denied");
-            System.exit(0);
+            System.out.println("Enter the password for your new account:");
+            password = keyboard.nextLine();
+            System.out.println("Account created.");
+
         }
 
         //Menu
         boolean runGame = true;
-        boolean petGenerated = false;
         int menuSelect;
 
         while (runGame == true) {
             displayMenu(petGenerated);
             menuSelect = keyboard.nextInt();
 
+            //display instructions
             if (menuSelect == 2) {
                 System.out.println("___________________");
                 System.out.println("Instructions:");
                 System.out.println("ok");
-            } else if (menuSelect == 3) {
+            } 
+            //exit game
+            else if (menuSelect == 3) {
+                //display this run's summary
                 System.out.println("___________________");
                 System.out.println("Today's summary:");
                                 
@@ -93,9 +133,22 @@ public class VirtualPet {
                 
                 System.out.println("\nGame exited");
                 
-                File playerFile = new File(USERNAME+".txt");
+                //write to user's file all stats
+                File playerFile = new File(username+".txt");
                 try{
                     PrintWriter output = new PrintWriter(playerFile);
+                    output.println(password);
+                    output.println(pet);
+                    output.println(petName);
+                    output.println(maxStats[0]);
+                    output.println(maxStats[1]);
+                    output.println(maxStats[2]);
+                    output.println(currentStats[0]);
+                    output.println(currentStats[1]);
+                    output.println(currentStats[2]);
+                    output.println(money);
+                    
+                    output.close();
                 }
                 catch(FileNotFoundException e){
                     System.out.println("file not found");
@@ -155,7 +208,7 @@ public class VirtualPet {
                     System.out.println(" 2) Interact");
 
                     int playOrInteract = keyboard.nextInt();
-
+                    
                     if (playOrInteract == 1) {
                         System.out.println("___________________");
                         System.out.println("Game selection");
@@ -255,19 +308,16 @@ public class VirtualPet {
 
     //methods
     public static void displayMenu(boolean petGenerated) {
+        System.out.println("___________________");
+        System.out.println("Menu selection");
         if (petGenerated == false) {
-            System.out.println("___________________");
-            System.out.println("Menu selection");
             System.out.println(" 1) Start");
-            System.out.println(" 2) Instructions");
-            System.out.println(" 3) Exit");
         } else {
-            System.out.println("___________________");
-            System.out.println("Menu selection");
             System.out.println(" 1) Play/Interact");
-            System.out.println(" 2) Instructions");
-            System.out.println(" 3) Exit");
+           
         }
+        System.out.println(" 2) Instructions");
+        System.out.println(" 3) Exit");
     }
 
     public static String generateName() {
@@ -448,4 +498,8 @@ public class VirtualPet {
         }
         return money;
     }
+    
+    //seperate groomPet and buyItem methods into intput/output
+    //codes to methods
 }
+
